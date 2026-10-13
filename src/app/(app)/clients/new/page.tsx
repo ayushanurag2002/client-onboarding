@@ -32,12 +32,12 @@ export default function NewClientPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader back={{ href: "/clients", label: "Clients" }} title="New client intake" subtitle="Creates the client in Intake with a generated onboarding checklist, document requests and a kick-off task." />
-      <ol className="mb-6 flex items-center gap-2">
+      <ol className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-2">
         {steps.map((s, i) => (
           <li key={s.label} className="flex items-center gap-2">
             <span className={cn("flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold", i < step ? "bg-success text-white" : i === step ? "bg-brand text-brand-fg" : "bg-subtle text-faint")}>{i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}</span>
-            <span className={cn("text-sm font-medium", i === step ? "text-fg" : "text-faint")}>{s.label}</span>
-            {i < steps.length - 1 ? <ChevronRight className="mx-1 h-4 w-4 text-faint" /> : null}
+            <span className={cn("text-sm font-medium", i === step ? "text-fg" : "hidden text-faint sm:inline")}>{s.label}</span>
+            {i < steps.length - 1 ? <ChevronRight className="mx-0.5 h-4 w-4 text-faint sm:mx-1" /> : null}
           </li>
         ))}
       </ol>

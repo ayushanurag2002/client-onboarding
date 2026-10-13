@@ -197,7 +197,7 @@ export default function ClientDetailPage() {
               <CardHeader title="Beneficial owners" subtitle={`${ownershipTotal}% declared · owners ≥25% must be KYC-verified`} action={<Button size="sm" variant="outline" onClick={() => setDlg("owner")}><UserPlus className="h-3.5 w-3.5" /> Add owner</Button>} />
               <CardBody>
                 {owners.length === 0 ? <p className="text-sm text-muted">No beneficial owners declared yet.</p> : (
-                  <table className="w-full text-sm">
+                  <div className="scroll-area overflow-x-auto"><table className="w-full text-sm">
                     <thead className="text-[11px] uppercase tracking-wider text-faint"><tr><th className="pb-2 pr-3 text-left font-semibold">Owner</th><th className="pb-2 pr-3 text-left font-semibold">Country</th><th className="pb-2 pr-6 text-right font-semibold">Ownership</th><th className="pb-2 pr-3 text-left font-semibold">PEP</th><th className="pb-2 pr-3 text-left font-semibold">KYC</th><th className="pb-2 text-right font-semibold"></th></tr></thead>
                     <tbody>
                       {owners.map((o) => (
@@ -211,7 +211,7 @@ export default function ClientDetailPage() {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></div>
                 )}
               </CardBody>
             </Card>
