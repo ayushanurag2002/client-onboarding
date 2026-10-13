@@ -433,7 +433,7 @@ export const useStore = create<Store>()(
       };
     },
     {
-      name: "allocations-client-onboarding-v1",
+      name: "allocations-client-onboarding-v2",
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({ specialists: s.specialists, clients: s.clients, contacts: s.contacts, checklist: s.checklist, documents: s.documents, owners: s.owners, agreements: s.agreements, tasks: s.tasks, notes: s.notes, activity: s.activity }),
       onRehydrateStorage: () => (state) => state?.setHydrated(true),

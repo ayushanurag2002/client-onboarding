@@ -30,6 +30,7 @@ export default function ClientDetailPage() {
   const [rejectId, setRejectId] = React.useState<string | null>(null);
   const [decision, setDecision] = React.useState<ScreeningDecision | null>(null);
   const [note, setNote] = React.useState("");
+  const [blocked, setBlocked] = React.useState<string[] | null>(null);
   if (!c) return <EmptyState title="Client not found" action={<Link href="/clients"><Button variant="outline">Back to clients</Button></Link>} />;
 
   const blockers = stageBlockers(d, c);
@@ -50,9 +51,12 @@ export default function ClientDetailPage() {
 
   const advance = () => {
     const r = d.advanceStage(c.id);
-    if (!r.ok) toast.error(r.error);
-    else toast.success(r.message ?? "Advanced");
+    if (!r.ok) {
+      if (r.blockers?.length) setBlocked(r.blockers);
+      else toast.error(r.error);
+    } else toast.success(r.message ?? "Advanced");
   };
+  const phaseTab: Tab = c.stage === "verification" ? "verification" : c.stage === "agreements" ? "agreements" : c.stage === "setup" ? "setup" : "checklist";
 
   return (
     <>
@@ -91,6 +95,10 @@ export default function ClientDetailPage() {
         <Card className="p-4"><KV label="Documents" value={`${docs.filter((x) => x.status === "verified").length}/${docs.length}`} /><p className="mt-1 text-[11px] text-faint">verified</p></Card>
         <Card className="p-4"><KV label="Created" value={fmtDate(c.createdAt)} /><p className="mt-1 text-[11px] text-faint">{c.source}</p></Card>
       </div>
+
+      {c.health === "active" && next && blockers.length && tab !== "overview" ? (
+        <div className="mb-4"><BlockerList blockers={blockers} title={`Outstanding before ${STAGE_LABEL[next]}`} /></div>
+      ) : null}
 
       <Tabs<Tab> value={tab} onChange={setTab} tabs={[{ id: "overview", label: "Overview" }, { id: "checklist", label: "Checklist", count: d.checklist.filter((i) => i.clientId === c.id && !i.done && i.required).length }, { id: "verification", label: "Verification" }, { id: "agreements", label: "Agreements", count: agreements.filter((a) => a.status !== "signed").length }, { id: "setup", label: "Setup" }, { id: "contacts", label: "Contacts", count: contacts.length }, { id: "activity", label: "Notes & activity", count: notes.length }]} />
 
@@ -340,6 +348,13 @@ export default function ClientDetailPage() {
         ) : null}
       </div>
 
+      {blocked && next ? (
+        <Dialog open onClose={() => setBlocked(null)} title={`Can't advance to ${STAGE_LABEL[next]} yet`} description={`${blocked.length} required item${blocked.length > 1 ? "s" : ""} still open in ${STAGE_LABEL[c.stage]}.`} size="sm" footer={<><Button variant="ghost" onClick={() => setBlocked(null)}>Close</Button><Button onClick={() => { setTab(phaseTab); setBlocked(null); }}>Go to {phaseTab === "checklist" ? "checklist" : STAGE_LABEL[c.stage]}</Button></>}>
+          <ul className="space-y-2">
+            {blocked.map((b) => <li key={b} className="flex items-start gap-2 text-sm"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />{b.replace(/^[A-Za-z]+: /, "")}</li>)}
+          </ul>
+        </Dialog>
+      ) : null}
       <AddContactDialog open={dlg === "contact"} onClose={() => setDlg(null)} clientId={c.id} />
       <AddOwnerDialog open={dlg === "owner"} onClose={() => setDlg(null)} clientId={c.id} />
       <RequestDocDialog open={dlg === "doc"} onClose={() => setDlg(null)} clientId={c.id} />

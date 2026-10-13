@@ -1,6 +1,7 @@
 import type { Activity, Agreement, AppData, BeneficialOwner, ChecklistItem, Client, ClientDoc, Contact, Note, Specialist, Stage, Task } from "./types";
 import { CHECKLIST_TEMPLATE, PLAN_PRICING, STAGES } from "./constants";
 import { addDays, isoDate } from "./utils";
+import { derivedChecklistState } from "./selectors";
 
 const D = (offsetDays: number) => isoDate(addDays(new Date(), offsetDays));
 const T = (offsetDays: number, hour = 10) => {
@@ -200,5 +201,9 @@ const activity: Activity[] = [
 ];
 
 export function buildSeed(): AppData {
-  return { specialists, clients, contacts, checklist, documents, owners, agreements, tasks, notes, activity };
+  const base: AppData = { specialists, clients, contacts, checklist: [], documents, owners, agreements, tasks, notes, activity };
+  // Items backed by real records are marked done when the record already satisfies them.
+  const derived = Object.fromEntries(clients.map((c) => [c.id, derivedChecklistState(base, c)]));
+  base.checklist = checklist.map((i) => (!i.done && derived[i.clientId]?.[i.key] ? { ...i, done: true, doneAt: i.doneAt ?? T(-1) } : i));
+  return base;
 }
