@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Building2, KanbanSquare, CheckSquare, FolderOpen, Users, BarChart3, Settings, Rocket, X } from "lucide-react";
+import { LayoutDashboard, Building2, KanbanSquare, CheckSquare, FolderOpen, Users, BarChart3, Settings, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "./logo";
 import { useStore } from "@/lib/store";
 import { isOverSla } from "@/lib/selectors";
 
@@ -29,9 +30,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       <aside className={cn("fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-elev transition-transform lg:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
         <div className="flex h-16 items-center justify-between px-5">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-teal text-brand-fg shadow-[0_6px_16px_-6px_var(--brand)]">
-              <Rocket className="h-4 w-4" />
-            </span>
+            <LogoMark />
             <span className="leading-tight">
               <span className="block text-[15px] font-semibold tracking-tight">Allocations</span>
               <span className="block text-[11px] font-medium uppercase tracking-wider text-faint">Client Onboarding</span>
